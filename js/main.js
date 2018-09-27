@@ -78,7 +78,7 @@ initMap = () => {
         scrollWheelZoom: false
       });
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-    mapboxToken: '<your MAPBOX API KEY HERE>',
+    mapboxToken: 'pk.eyJ1IjoiamJhbHBoYW5lcmQiLCJhIjoiY2ptajBmMm4xMGFwazNxa3duamg3MWNxMiJ9.3v2eJkcIK6_mhW8ub5bqYA',
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -172,12 +172,13 @@ createRestaurantHTML = (restaurant) => {
   li.append(neighborhood);
 
   const address = document.createElement('p');
-  address.innerHTML = restaurant.address;
+  address.innerHTML = restaurant.address.replace(', ', ',<br />');
   li.append(address);
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
+  more.tabIndex = '3';
   li.append(more)
 
   return li
@@ -198,6 +199,79 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 
 } 
+
+// Register service worker
+if('serviceWorker' in navigator) {
+    navigator.serviceWorker
+    .register('/sw.js')
+    .catch(function(err) {
+        console.error(err);
+    });
+} 
+
+//Display when the service worker is registered
+console.log('Service Worker: Registered');
+
+//Listen for installation event
+self.addEventListener('install', function(e) {
+    
+});
+
+const cacheFiles = [
+    '/',
+    '/index.html',
+    '/restaurant.html',
+    '/css/styles.css',
+    '/js/dbhelper.js',
+    '/js/main.js',
+    '/js/restaurant_info.js',
+    '/data/restaurants.json',
+    '/img/1.jpg',
+    '/img/2.jpg',
+    '/img/3.jpg',
+    '/img/4.jpg',
+    '/img/5.jpg',
+    '/img/6.jpg',
+    '/img/7.jpg',
+    '/img/8.jpg',
+    '/img/9.jpg',
+    '/img/10.jpg'
+    
+];
+
+//Wait until installation event is completed
+self.addEventListener('install', function(e) {
+    e.waitUntil(
+        caches.open('v1').then(function (cache) {
+            return cache.addAll(cacheFiles);
+        })
+    );
+});
+
+//Listen for fetch event
+self.addEventListener('fetch', function(e) {
+    e.respondWith(
+        caches.match(e.request).then(function(response) {
+            if(response) {
+                console.log('Found', e.request, ' in cache');
+                return response;
+            } 
+            else {
+                console.log('Could not find ', e.request, ' in cache, FETCHING!');
+                return fetch(e.request).then(function(response) {
+                   const clonedResponse = response.clone(); 
+                    caches.open('v1').then(function(cache) {
+                        cache.put(e.request, clonedResponse);
+                    }) 
+                    return response;
+                })
+                .catch(function(err) {
+                    console.error(err);
+                });
+            }
+        })
+    );
+});
 /* addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map
