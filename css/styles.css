@@ -131,6 +131,13 @@ nav h1 a {
 }
 
 /* ====================== Restaurant Listing ====================== */
+@media screen and (min-width: 1024px) {
+    #restaurants-list {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 10;
+    }
+}
 #restaurants-list {
   background-color: #f3f3f3;
   list-style: outside none none;
