@@ -9,8 +9,13 @@ var Promise;
 var CACHE_NAME = 'my-site-cache-v1';
 var urlsToCache = [
   '/',
-  '/styles/main.css',
-  '/script/main.js'
+  '/css/styles.css',
+  '/js/main.js'
+  '/js/dbhelper.js'
+  '/js/restaurant_info.js'
+  '/data/restaurants.json'
+  '/index.html'
+  '/restaurant.html'
 ];
 
 self.addEventListener('install', function(event) {
