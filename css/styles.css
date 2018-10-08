@@ -196,6 +196,11 @@ nav h1 a {
 }
 
 /* ====================== Restaurant Details ====================== */
+.inside {
+    display: flex;
+    flex-flow: row wrap;
+}
+
 .inside header {
   position: fixed;
   top: 0;
@@ -214,8 +219,6 @@ nav h1 a {
   background-color: #ccc;
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-direction: column;
   margin: 0;
 }
 .inside #footer {
