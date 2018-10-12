@@ -47,7 +47,9 @@ self.addEventListener('fetch', function(event) {
         // Cache hit - return response
         if (response) {
           return response;
-        }
+        } 
+          
+        return fetch(event.request);
 
         // IMPORTANT: Clone the request. A request is a stream and
         // can only be consumed once. Since we are consuming this
